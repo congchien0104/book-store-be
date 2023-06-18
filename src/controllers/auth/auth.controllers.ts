@@ -20,6 +20,8 @@ export const login = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const logout = catchAsync(async (req: Request, res: Response) => {
+    console.log('2auth controller: ', req.body.refreshToken);
+
   await authService.logout(req.body.refreshToken);
   res.status(httpStatus.NO_CONTENT).send();
 });

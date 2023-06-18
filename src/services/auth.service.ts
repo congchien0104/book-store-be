@@ -4,7 +4,7 @@ import Token from '../models/token.model';
 import ApiError from '../errors/ApiError';
 import tokenTypes from '../constants/token.types';
 import { getUserByEmail, getUserById } from '../services/user.service';
-import { IUserDoc, IUserWithTokens } from '../interfaces/user.interface';
+import { IUserDoc, IUserWithTokens } from '../interfaces/user.interfaces';
 import { generateAuthTokens, verifyToken } from '../services/token.service';
 
 /**

@@ -1,18 +1,8 @@
 import mongoose from "mongoose";
 import httpStatus from 'http-status';
 import ApiError from '../errors/ApiError';
-import { IUser, IUserDoc, NewRegisteredUser } from "../interfaces/user.interface";
+import { IUserDoc, NewRegisteredUser } from "../interfaces/user.interfaces";
 import User from "../models/user.model";
-
-
-/**
- * Create a user
- * @param {IUser} params
- * @returns {Promise<IUser>}
- */
-export const create = async (params: IUser): Promise<IUser> => {
-    return await User.create(params);
-};
 
 /**
  * Register a user

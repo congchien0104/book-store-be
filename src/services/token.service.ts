@@ -4,11 +4,10 @@ import mongoose from 'mongoose';
 import httpStatus from 'http-status';
 import config from '../config/config';
 import Token from '../models/token.model';
-//import ApiError from '../errors/ApiError';
+import ApiError from '../errors/ApiError';
 import tokenTypes from '../constants/token.types';
 import { AccessAndRefreshTokens, ITokenDoc } from '../interfaces/token.interfaces';
-import { IUserDoc } from '../interfaces/user.interface';
-import * as userService from './user.service';
+import { IUserDoc } from '../interfaces/user.interfaces';
 
 /**
  * Generate token
@@ -66,11 +65,9 @@ export const saveToken = async (
  * @returns {Promise<ITokenDoc>}
  */
 export const verifyToken = async (token: string, type: string): Promise<ITokenDoc> => {
-    console.log('verifyToken');
   const payload = jwt.verify(token, config.jwt.secret);
   if (typeof payload.sub !== 'string') {
-    console.log('Token fail...');
-    //throw new ApiError(httpStatus.BAD_REQUEST, 'bad user');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'bad user');
   }
   const tokenDoc = await Token.findOne({
     token,

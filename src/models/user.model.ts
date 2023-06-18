@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import { IUserDoc, IUserModel } from '../interfaces/user.interface';
+import { roles } from '../config/roles';
+import { IUserDoc, IUserModel } from '../interfaces/user.interfaces';
 
 
 
@@ -37,7 +38,7 @@ const userSchema = new mongoose.Schema<IUserDoc, IUserModel>(
       },
       role: {
         type: String,
-        //enum: roles,
+        enum: roles,
         default: 'user',
       },
       isEmailVerified: {

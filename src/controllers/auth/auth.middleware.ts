@@ -3,7 +3,7 @@ import passport from 'passport';
 import httpStatus from 'http-status';
 import ApiError from '../../errors/ApiError';
 import { roleRights } from '../../config/roles';
-import { IUserDoc } from '../../interfaces/user.interface';
+import { IUserDoc } from '../../interfaces/user.interfaces';
 
 const verifyCallback =
   (req: Request, resolve: any, reject: any, requiredRights: string[]) =>
@@ -12,7 +12,6 @@ const verifyCallback =
       return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
     }
     req.body = user;
-
     if (requiredRights.length) {
       const userRights = roleRights.get(user.role);
       if (!userRights) return reject(new ApiError(httpStatus.FORBIDDEN, 'Forbidden'));

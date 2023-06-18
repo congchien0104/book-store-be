@@ -1,9 +1,18 @@
-import express from 'express';
+import express, { Router } from 'express';
+//import { validate } from '../../modules/validate';
+import { auth } from '../controllers/auth';
 import { productController } from '../controllers/product';
 
-export default (router: express.Router) => {
-  router.get('/products/:productId', productController.getProduct);
-  router.post('/products', productController.createProduct);
-  router.put('/products/:productId', productController.updateProduct);
-  router.delete('/products/:productId', productController.deleteProduct);
-};
+const router: Router = express.Router();
+
+router
+  .route('/')
+  .post(productController.createProduct);
+
+router
+  .route('/:productId')
+  .get(productController.getProduct)
+  .put(auth('manageProducts'), productController.updateProduct)
+  .delete(auth('manageProducts'), productController.deleteProduct);
+
+export default router;

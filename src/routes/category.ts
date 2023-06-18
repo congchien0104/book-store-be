@@ -1,6 +1,10 @@
-import express from 'express';
+import express, { Router } from 'express';
+//import { validate } from '../../modules/validate';
+//import { auth } from '../controllers/auth';
 import { categoryController } from '../controllers/category';
 
-export default (router: express.Router) => {
-  router.get('/categories', categoryController.getCategories);
-};
+const router: Router = express.Router();
+
+router.get('/',categoryController.getCategories);
+
+export default router;

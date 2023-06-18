@@ -1,6 +1,7 @@
 import httpStatus from 'http-status';
 import mongoose from "mongoose";
-import Product, { IProduct } from '../models/product.model';
+import Product from '../models/product.model';
+import { IProduct, IProductDoc } from '../interfaces/product.interfaces';
 /**
  * Create a user
  * @param {IProduct} params
@@ -10,7 +11,7 @@ export const create = async (params: IProduct): Promise<IProduct> => {
     return await Product.create(params);
 };
 
-export const getProductById = async (id: mongoose.Types.ObjectId): Promise<IProduct | null> => {
+export const getProductById = async (id: mongoose.Types.ObjectId): Promise<IProductDoc | null> => {
     const result = await Product.findById(id);
     return result;
 };

@@ -4,12 +4,7 @@ import mongoose from 'mongoose';
 import catchAsync from '../../utils/catchAsync';
 import * as userService from '../../services/user.service';
 
-// export const getCategories = catchAsync(async (req: Request, res: Response) => {
-//     const categories = await categoryService.getAllCategory();
-//     res.send(categories);
-// });
-
 export const createUser = catchAsync(async (req: Request, res: Response) => {
-    const user = await userService.create(req.body);
+    const user = await userService.registerUser(req.body);
     res.send(user);
 })
