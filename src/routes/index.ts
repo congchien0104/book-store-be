@@ -1,25 +1,6 @@
-// import express from 'express';
-
-// //import authentication from './authentication';
-// import category from './category';
-// import product from './product';
-// import user from './user';
-// import auth from './auth';
-
-// const router = express.Router();
-
-// export default (): express.Router => {
-//   //authentication(router);
-//   category(router);
-//   product(router);
-//   user(router);
-//   auth(router);
-
-//   return router;
-// };
-
 import express, { Router } from 'express';
 import authRoute from './auth';
+import bookRoute from './book';
 import categoryRoute from './category';
 import productRoute from './product';
 import docsRoute from './swagger';
@@ -38,12 +19,16 @@ const defaultIRoute: IRoute[] = [
     route: authRoute,
   },
   {
-    path: '/products',
-    route: productRoute,
+    path: '/books',
+    route: bookRoute,
   },
   {
     path: '/categories',
     route: categoryRoute,
+  },
+  {
+    path: '/products',
+    route: productRoute,
   },
 ];
 
