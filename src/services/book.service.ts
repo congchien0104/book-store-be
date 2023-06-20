@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import Book from '../models/book.model';
 import { IBook, IBookDoc } from '../interfaces/book.interfaces';
 import ApiError from '../errors/ApiError';
+import { IOptions, QueryResult } from "../paginate/paginate";
 /**
  * Create a user
  * @param {IProduct} params
@@ -10,6 +11,17 @@ import ApiError from '../errors/ApiError';
  */
 export const create = async (params: IBook): Promise<IBook> => {
     return await Book.create(params);
+};
+
+/**
+ * Query for users
+ * @param {Object} filter - Mongo filter
+ * @param {Object} options - Query options
+ * @returns {Promise<QueryResult>}
+ */
+export const queryUsers = async (filter: Record<string, any>, options: IOptions): Promise<QueryResult> => {
+    const books = await Book.paginate(filter, options);
+    return books;
 };
 
 export const getBookById = async (id: mongoose.Types.ObjectId): Promise<IBookDoc | null> => {

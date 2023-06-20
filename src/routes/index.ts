@@ -3,6 +3,7 @@ import authRoute from './auth';
 import bookRoute from './book';
 import categoryRoute from './category';
 import productRoute from './product';
+import userRoute from './user';
 import docsRoute from './swagger';
 import config from '../config/config';
 
@@ -29,6 +30,10 @@ const defaultIRoute: IRoute[] = [
   {
     path: '/products',
     route: productRoute,
+  },
+  {
+    path: '/users',
+    route: userRoute,
   },
 ];
 

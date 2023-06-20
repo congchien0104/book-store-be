@@ -7,6 +7,7 @@ const router: Router = express.Router();
 
 router
   .route('/')
+  .get(bookController.getBooks)
   .post(bookController.createBook);
 
 router

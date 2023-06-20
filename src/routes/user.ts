@@ -1,6 +1,12 @@
-import express from 'express';
+import express, { Router } from 'express';
+//import { validate } from '../../modules/validate';
+import { auth } from '../controllers/auth';
 import { userController } from '../controllers/user';
 
-export default (router: express.Router) => {
-  router.post('/users', userController.createUser);
-};
+const router: Router = express.Router();
+
+router
+  .route('/')
+  .get(userController.getUsers);
+
+export default router;

@@ -1,13 +1,22 @@
 import httpStatus from 'http-status';
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
+import { IOptions } from 'paginate/paginate';
 import catchAsync from '../../utils/catchAsync';
 import * as bookService from '../../services/book.service';
 import ApiError from '../../errors/ApiError';
+import pick from '../../utils/pick';
 
 export const createBook = catchAsync(async (req: Request, res: Response) => {
     const book = await bookService.create(req.body);
     res.send(book);
+});
+
+export const getBooks = catchAsync(async (req: Request, res: Response) => {
+    const filter = pick(req.query, ['title', 'role']);
+    const options: IOptions = pick(req.query, ['sortBy', 'limit', 'page', 'projectBy']);
+    const result = await bookService.queryUsers(filter, options);
+    res.send(result);
 });
 
 export const getBook = catchAsync(async (req: Request, res: Response) => {

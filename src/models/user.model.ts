@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { roles } from '../config/roles';
 import { IUserDoc, IUserModel } from '../interfaces/user.interfaces';
+import { toJSON } from '../toJSON';
+import { paginate } from '../paginate';
 
 
 
@@ -50,6 +52,10 @@ const userSchema = new mongoose.Schema<IUserDoc, IUserModel>(
       timestamps: true,
     }
   );
+
+// add plugin that converts mongoose to json
+userSchema.plugin(toJSON);
+userSchema.plugin(paginate);
 
 /**
  * Check if email is taken
