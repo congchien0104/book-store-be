@@ -6,5 +6,5 @@ import * as categoryService from '../../services/category.service';
 
 export const getCategories = catchAsync(async (req: Request, res: Response) => {
     const categories = await categoryService.getAllCategory();
-    res.send(categories);
+    res.send({ data: categories});
 });

@@ -1,6 +1,5 @@
 import express, { Express } from 'express';
 import helmet from 'helmet';
-//import xss from 'xss-clean';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import compression from 'compression';
 import cors from 'cors';
@@ -9,7 +8,6 @@ import httpStatus from 'http-status';
 import config from './config/config';
 import { morgan } from '../src/logger';
 import { jwtStrategy } from '../src/controllers/auth';
-//import { authLimiter } from './modules/utils';
 import { ApiError, errorConverter, errorHandler } from '../src/errors';
 import routes from './routes';
 
@@ -49,7 +47,6 @@ passport.use('jwt', jwtStrategy);
 //   app.use('/v1/auth', authLimiter);
 // }
 
-// v1 api routes
 app.use('/', routes);
 
 // send back a 404 error for any unknown api request
