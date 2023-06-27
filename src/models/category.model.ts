@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { ICategoryDoc, ICategoryModel } from '../interfaces/category.interfaces';
+import toJson from '../toJSON/toJSON'
 
 const categorySchema = new mongoose.Schema<ICategoryDoc, ICategoryModel>(
   {
@@ -16,6 +17,8 @@ const categorySchema = new mongoose.Schema<ICategoryDoc, ICategoryModel>(
     timestamps: true,
   }
 );
+
+categorySchema.plugin(toJson);
 
 const Category = mongoose.model<ICategoryDoc, ICategoryModel>('Category', categorySchema);
 

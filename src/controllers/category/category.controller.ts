@@ -8,3 +8,8 @@ export const getCategories = catchAsync(async (req: Request, res: Response) => {
     const categories = await categoryService.getAllCategory();
     res.send({ data: categories});
 });
+
+export const createCategory = catchAsync(async (req: Request, res: Response) => {
+    const category = await categoryService.create(req.body)
+    res.send({ category });
+})

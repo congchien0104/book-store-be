@@ -26,6 +26,9 @@ export const queryUsers = async (filter: Record<string, any>, options: IOptions)
 
 export const getBookById = async (id: mongoose.Types.ObjectId): Promise<IBookDoc | null> => {
     const result = await Book.findById(id);
+    if (!result) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Book not found');
+    }
     return result;
 };
 
