@@ -3,24 +3,43 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import app from '../../app';
 import Book from '../../models/book.model';
-import { IBook } from '../../interfaces/book.interfaces';
+import { IBook, UpdateBookBody } from '../../interfaces/book.interfaces';
 import setupTestDB from '../../jest/setupTestDB';
 
 const bookOne = {
     _id: new mongoose.Types.ObjectId(),
     title: 'Drama',
-    image: 'testing',
+    image: 'testing1',
     categoryId: '123456',
     price: 100000,
     quantity: 10,
-    description: 'This is testing'
+    description: 'This is testing1'
 }
+const bookTwo = {
+    _id: new mongoose.Types.ObjectId(),
+    title: 'Comedy',
+    image: 'testing2',
+    categoryId: '123456',
+    price: 100000,
+    quantity: 10,
+    description: 'This is testing2'
+}
+
+const bookThree = {
+    _id: new mongoose.Types.ObjectId(),
+    title: 'Sport',
+    image: 'testing3',
+    categoryId: '123456',
+    price: 100000,
+    quantity: 10,
+    description: 'This is testing3'
+}
+
 setupTestDB();
 
 
 const insertBooks = async (books: Record<string, any>[]) => {
-    console.log('1 ok');
-    await Book.insertMany(books.map((book) => ({ book })));
+    await Book.insertMany(books.map((book) => ({ ...book })));
 };
 
 
@@ -83,13 +102,89 @@ describe('Book controller', () => {
             await Book.create(bookOne);
             
             const res = await request(app).get(`/books/${bookOne._id}`).send().expect(httpStatus.OK);
+
+            expect(res.body.title).toEqual(book.title);
+            expect(res.body.quantity).toEqual(book.quantity);
         })
 
-        // test('should return 400 error if bookId is bad request', async () => {
-        //     const bookId = '123';
-        //     await Book.create(bookOne);
+        test('should return 404 not found if get book is empty', async () => {
+            await Book.create(bookOne);
+            const bookId = new mongoose.Types.ObjectId();
             
-        //     const res = await request(app).get(`/books/${bookId}`).send().expect(httpStatus.NOT_FOUND);
-        // })
+            const res = await request(app).get(`/books/${bookId}`).send().expect(httpStatus.NOT_FOUND);
+        })
+    })
+
+    describe('Get Books: ', () => {
+
+        beforeEach(() => {
+
+        })
+
+        test('should return 200 and successfully get books if data is ok', async () => {
+            await insertBooks([bookOne, bookTwo, bookThree]);
+
+            const res = await request(app).get('/books').send().expect(httpStatus.OK);
+            expect(res.body.limit).toEqual(10);
+            expect(res.body.totalResults).toEqual(3);
+
+            const dbBook = await Book.findById(bookOne._id);
+            expect(dbBook).toBeDefined();
+            if (!dbBook) return;
+
+            expect(dbBook.title).toEqual(bookOne.title);
+            expect(dbBook.image).toEqual(bookOne.image);
+        })
+    })
+
+    describe('Put update Book', () => {
+        let testUpdateBook: UpdateBookBody;
+        beforeEach(() => {
+            testUpdateBook = {
+                title: 'Football',
+                price: 200500,
+                quantity: 20
+            } 
+        })
+
+        test('should return 201 and successfully update book if data is ok', async () => {
+            await insertBooks([bookOne, bookTwo, bookThree]);
+
+            const res = await request(app).put(`/books/${bookOne._id}`).send(testUpdateBook).expect(httpStatus.OK);
+            expect(res.body.title).toEqual(testUpdateBook.title);
+            expect(res.body.price).toEqual(testUpdateBook.price);
+
+        })
+
+        test('should return 404 not found if get book is empty', async () => {
+            await insertBooks([bookOne, bookTwo]);
+
+            await request(app)
+                .put(`/books/${bookThree._id}`)
+                .send(testUpdateBook)
+                .expect(httpStatus.NOT_FOUND);
+
+        })
+    })
+
+    describe('Delete remove Book', () => {
+        
+        test('should return 204 and successfully delete book if data is ok', async () => {
+            await insertBooks([bookOne, bookTwo, bookThree]);
+
+            await request(app)
+                .delete(`/books/${bookOne._id}`)
+                .send()
+                .expect(httpStatus.NO_CONTENT);
+        })
+
+        test('should return 404 not found if getBook is empty', async () => {
+            await insertBooks([bookOne, bookThree]);
+
+            await request(app)
+                .delete(`/books/${bookTwo._id}`)
+                .send()
+                .expect(httpStatus.NOT_FOUND);
+        })
     })
 })
