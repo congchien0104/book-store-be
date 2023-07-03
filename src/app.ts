@@ -6,9 +6,9 @@ import cors from 'cors';
 import passport from 'passport';
 import httpStatus from 'http-status';
 import config from './config/config';
-import { morgan } from '../src/logger';
-import { jwtStrategy } from '../src/controllers/auth';
-import { ApiError, errorConverter, errorHandler } from '../src/errors';
+import { morgan } from './logger';
+import { jwtStrategy } from './controllers/auth';
+import { ApiError, errorConverter, errorHandler } from './errors';
 import routes from './routes';
 
 const app: Express = express();

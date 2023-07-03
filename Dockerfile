@@ -1,14 +1,17 @@
-# syntax=docker/dockerfile:1
-
 FROM node:18-alpine
-ENV NODE_ENV=production
+RUN apk update
 
-WORKDIR /app
+# create root application folder
+WORKDIR /usr/src/app
 
-COPY ["package.json", "package-lock.json*", "./"]
+# copy configs to /app folder
+COPY package*.json ./
+COPY tsconfig.json ./
+RUN npm install
+# copy source code to /app/src folder
+COPY ./src ./src
+RUN npm run compile
+# check files list
+RUN ls -a
 
-RUN npm install --production
-
-COPY . .
-
-CMD ["node", "src/index.ts"]
+CMD node ./dist/index.js

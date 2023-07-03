@@ -1,6 +1,6 @@
 components:
   schemas:
-    User:
+    Book:
       type: object
       properties:
         id:
