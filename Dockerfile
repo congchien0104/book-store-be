@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:18-alpine as base
 RUN apk update
 
 # create root application folder
@@ -14,4 +14,14 @@ RUN npm run compile
 # check files list
 RUN ls -a
 
+
+
+FROM base as production 
+WORKDIR /usr/prod/app
+COPY package*.json ./
+RUN npm install --production
+COPY --from=base /usr/src/app/dist ./dist
+
 CMD node ./dist/index.js
+
+
