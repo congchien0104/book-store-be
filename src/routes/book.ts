@@ -8,12 +8,12 @@ const router: Router = express.Router();
 router
   .route('/')
   .get(bookController.getBooks)
-  .post(bookController.createBook);
+  .post(auth('manageBooks'), bookController.createBook);
 
 router
   .route('/:bookId')
   .get(bookController.getBook)
-  .put(bookController.updateBook)
-  .delete(bookController.deleteBook);
+  .put(auth('manageBooks'), bookController.updateBook)
+  .delete(auth('manageBooks'), bookController.deleteBook);
 
 export default router;
