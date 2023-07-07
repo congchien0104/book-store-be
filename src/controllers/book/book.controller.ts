@@ -6,9 +6,11 @@ import catchAsync from '../../utils/catchAsync';
 import * as bookService from '../../services/book.service';
 import ApiError from '../../errors/ApiError';
 import pick from '../../utils/pick';
+import { runProducer } from '../../kafka/producer';
 
 export const createBook = catchAsync(async (req: Request, res: Response) => {
     const book = await bookService.create(req.body);
+    await runProducer(book);
     res.send(book);
 });
 
