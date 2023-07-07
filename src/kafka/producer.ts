@@ -1,42 +1,135 @@
-import { Kafka, logLevel } from "kafkajs";
+import { Kafka } from "kafkajs";
+import {
+  SchemaRegistry,
+  readAVSCAsync,
+} from "@kafkajs/confluent-schema-registry";
+const TOPIC = "my_topic";
 
-
+// configure Kafka broker
 const kafka = new Kafka({
-    clientId: 'book-store',
-    brokers: ['localhost:9092'],
-    logLevel: logLevel.DEBUG,
+  clientId: "some-client-id",
+  brokers: ["localhost:29092"],
 });
 
+// If we use AVRO, we need to configure a Schema Registry
+// which keeps track of the schema
+const registry = new SchemaRegistry({
+  host: "http://localhost:8085",
+});
+
+// create a producer which will be used for producing messages
 const producer = kafka.producer();
 
-export const runProducer = async (res) => {
-    await producer.connect();
-    await producer.send({
-        topic: 'test',
-        //messages: [{ value: JSON.stringify(res) }]
-        messages: [{ key: 'test', value: 'Hello Kafka'}],
-    })
+const consumer = kafka.consumer({
+  groupId: "group_id_1",
+});
+
+// declaring a TypeScript type for our message structure
+declare type MyMessage = {
+  id: string;
+  title: string;
+  image: string;
+  categoryId: string;
+  price: number;
+  quantity: number;
+  description: string;
 };
 
-// const sendPayload = async () => {
-//     try {
-//         await producer.send({
-//             topic: 'test',
-//             messages: [{ key: 'test', value: 'Hello Kafka'}],
-//         })
-//     } catch (e) {
-//         console.error('Caught error while sending: ', e);
-//     }
-// } 
+// This will create an AVRO schema from an .avsc file
+const registerSchema = async () => {
+  try {
+    const schema = await readAVSCAsync("./src/avro/schema.avsc");
+    const { id } = await registry.register(schema);
+    return id;
+  } catch (e) {
+    console.log(e);
+  }
+};
 
-// const main = async () => {
-//     await producer.connect();
-//     setInterval(async () => {
-//         await sendPayload();
-//     }, 5000)
-// }
+// push the actual message to kafka
+const produceToKafka = async (registryId: number, message: MyMessage) => {
+  await producer.connect();
 
-// main();
+  // compose the message: the key is a string
+  // the value will be encoded using the avro schema
+  const outgoingMessage = {
+    key: message.id,
+    value: await registry.encode(registryId, message),
+  };
 
+  // send the message to the previously created topic
+  await producer.send({
+    topic: TOPIC,
+    messages: [outgoingMessage],
+  });
 
+  // disconnect the producer
+  await producer.disconnect();
+};
 
+// create the kafka topic where we are going to produce the data
+const createTopic = async () => {
+  try {
+    const topicExists = (await kafka.admin().listTopics()).includes(TOPIC);
+    if (!topicExists) {
+      await kafka.admin().createTopics({
+        topics: [
+          {
+            topic: TOPIC,
+            numPartitions: 1,
+            replicationFactor: 1,
+          },
+        ],
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const produce = async (res) => {
+
+    //console.log('Controller message: ', res);
+  await createTopic();
+  try {
+    const registryId = await registerSchema();
+    // push example message
+    if (registryId) {
+      const message: MyMessage = { 
+        id: res.id, 
+        title: res.title,
+        image: res.image,
+        categoryId: res.categoryId,
+        price: res.price,
+        quantity: res.quantity,
+        description: res.description, 
+      };
+      registryId && (await produceToKafka(registryId, message));
+      console.log(`Produced message to Kafka: ${JSON.stringify(message)}`);
+    }
+  } catch (error) {
+    console.log(`There was an error producing the message: ${error}`);
+  }
+};
+
+async function consume() {
+  await consumer.connect();
+
+  await consumer.subscribe({
+    topic: TOPIC,
+    fromBeginning: true,
+  });
+
+  await consumer.run({
+    eachMessage: async ({ topic, partition, message }) => {
+      if (message.value) {
+        const value: MyMessage = await registry.decode(message.value);
+        console.log(value);
+      }
+    },
+  });
+}
+
+// produce()
+//   .then(() => consume())
+consume();

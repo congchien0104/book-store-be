@@ -1,0 +1,36 @@
+{
+  "name": "example",
+  "type": "record",
+  "namespace": "com.my.company",
+  "doc": "Kafka JS example schema",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "image",
+      "type": "string"
+    },
+    {
+      "name": "categoryId",
+      "type": "string"
+    },
+    {
+      "name": "price",
+      "type": "int"
+    },
+    {
+      "name": "quantity",
+      "type": "int"
+    },
+    {
+      "name": "description",
+      "type": "string"
+    }
+  ]
+}

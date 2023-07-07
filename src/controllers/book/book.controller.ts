@@ -6,11 +6,11 @@ import catchAsync from '../../utils/catchAsync';
 import * as bookService from '../../services/book.service';
 import ApiError from '../../errors/ApiError';
 import pick from '../../utils/pick';
-import { runProducer } from '../../kafka/producer';
+import { produce } from '../../kafka/producer';
 
 export const createBook = catchAsync(async (req: Request, res: Response) => {
     const book = await bookService.create(req.body);
-    await runProducer(book);
+    await produce(book);
     res.send(book);
 });
 
@@ -34,6 +34,7 @@ export const getBook = catchAsync(async (req: Request, res: Response) => {
 export const updateBook = catchAsync(async (req: Request, res: Response) => {
     if (typeof req.params['bookId'] === 'string') {
       const book = await bookService.updateBookById(new mongoose.Types.ObjectId(req.params['bookId']), req.body);
+      await produce(book);
       res.send(book);
     }
 });
